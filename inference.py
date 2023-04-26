@@ -105,7 +105,10 @@ def main(config):
     # Amber relaxation
     if config.relax_steps is not None and config.relax_steps > 0:
         with timing(f'Amber Relaxation : {config.relax_steps} iterations', logger=logger):
-            amber_relax = AmberRelaxation(max_iterations=config.relax_steps, logger=logger)
+            if config.device[0:4] == 'cuda' :
+                amber_relax = AmberRelaxation(max_iterations=config.relax_steps, logger=logger, use_gpu=True)
+            else:
+                amber_relax = AmberRelaxation(max_iterations=config.relax_steps, logger=logger)
             relaxed_model = f'{config.output_dir}/relaxed_{config.relax_steps}_model.pdb'
             amber_relax.process(unrelaxed_model, relaxed_model)
 
